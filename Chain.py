@@ -1,5 +1,4 @@
 #BlockChain Class
-#it contains a tuple with all blocks
 
 import random
 
