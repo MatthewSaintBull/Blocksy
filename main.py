@@ -1,12 +1,27 @@
-from Block import Block
-from Chain import Chain
+from http.server import BaseHTTPRequestHandler,HTTPServer
 
-blockChain = Chain()
-block = Block('9bba5f88ec18db7cebe0af644791873762c6838881ebf3eb801a0a3592b77064','blocco numero 1')
-val = blockChain.addBlock(block)
+class test:
+    def show(self):
+        return "aaaa"
 
-block = Block(blockChain.getPreviousHash(),'blocco numero 2');
-val = blockChain.addBlock(block)
-if(val!=0):
-    print("errore con codice : " + str(val))
-blockChain.getBlockChain()
+class http_server:
+    def __init__(self, t1):
+        server = HTTPServer(('', 8080), myHandler)
+        server.t1 = t1
+        server.serve_forever()
+
+class myHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-type','text/html')
+        self.end_headers()
+        print(self.server.t1.show())
+        return
+
+class main:
+    def __init__(self):
+        self.t1 = test()
+        self.server = http_server(self.t1)
+
+if __name__ == '__main__':
+    m = main()

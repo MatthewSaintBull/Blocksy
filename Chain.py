@@ -1,26 +1,26 @@
 #BlockChain Class
 
 import random
-
+from Block import Block
 class Chain():
     def __init__(self):
         self.__blockChain = []
 
-    def __validateBlock(self,block):
+    def __validateBlock(self, block):
         if not self.__blockChain: return 0
         return self.__compareBlocks(block,self.__blockChain[-1])
 
-    def __compareBlocks(self,currentBlock,previousBlock):
+    def __compareBlocks(self, currentBlock,previousBlock):
         if currentBlock.previousHash != previousBlock.hash: return -1
         else: return 0
 
-    def __generateId(self,block):
+    def __generateId(self, block):
         block.id = hash(random.randint(0,100**100)+block.timestamp)
 
-    def __generateHash(self,block):
+    def __generateHash(self, block):
         block.hash = block.calculateHash()
 
-    def addBlock(self,block):
+    def addBlock(self, block):
         result = self.__validateBlock(block)
         if result == 0:
             self.__generateId(block)
@@ -32,9 +32,9 @@ class Chain():
         return self.__blockChain[-1].hash
 
     def getBlockChain(self):
-        for block in self.__blockChain:
-            print("hash blocco : " + block.hash)
-            print("contenuto : " + block.data)
-            print("id : " + str(block.id))
+        return self.__blockChain
 
-
+    def startChain(self):
+        block = Block('','STARTING BLOCK')
+        self.addBlock(block)
+        return block
