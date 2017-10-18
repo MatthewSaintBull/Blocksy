@@ -6,7 +6,7 @@ class Chain():
     def __init__(self):
         self.__blockChain = []
 
-    def __validateBlock(self, block):
+    def __confirmBlock(self, block):
         if not self.__blockChain: return 0
         return self.__compareBlocks(block,self.__blockChain[-1])
 
@@ -21,7 +21,7 @@ class Chain():
         block.hash = block.calculateHash()
 
     def addBlock(self, block):
-        result = self.__validateBlock(block)
+        result = self.__confirmBlock(block)
         if result == 0:
             self.__generateId(block)
             self.__generateHash(block)
@@ -34,7 +34,19 @@ class Chain():
     def getBlockChain(self):
         return self.__blockChain
 
+    def __proofOfWork(self,last_proof):
+        incrementor = int(last_proof) + 1
+        while not (incrementor % 11 == 0 and incrementor % last_proof == 0):
+            incrementor += 1
+            print("incrementor : " + str(incrementor) )
+        return incrementor
+
+    def validateBlock(self):
+        last_proof = self.__blockChain[-1].proof
+        proof = self.__proofOfWork(last_proof)
+        return proof
+
     def startChain(self):
-        block = Block('','STARTING BLOCK')
+        block = Block('48d13d0f7e77b01c2f6c2fe581b3c1e7c5679fd901f705ba96731daf22af204f',0)
         self.addBlock(block)
         return block
