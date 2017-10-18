@@ -7,7 +7,7 @@ import json
 node = Flask(__name__)
 blockChain = Chain()
 blockChain.startChain()
-
+i = 0
 transaction_queue = [{'from':'matteo','to':'kevin','value':'3'},{'from':'annie','to':'john','value':'5'}]
 blocks_queue = []
 
@@ -34,7 +34,11 @@ def add():
     if not transaction_queue:
         return "YOU DON'T HAVE ANY TRANSACTION TO ADD"
     else:
-        block = Block(blockChain.getPreviousHash(),transaction_queue[:])
+        if not blocks_queue:
+            print("non ci sono blocchi in coda")
+            block = Block(blockChain.getPreviousHash(),transaction_queue[:])
+        else:
+            block = Block(blocks_queue[-1].hash,transaction_queue[:])
         blocks_queue.append(block)
         transaction_queue[:] = []
         return "BLOCK ADDED SUCCESSFULLY"
@@ -48,7 +52,22 @@ def mine():
         blocks_queue[0].proof = result
         blockChain.addBlock(blocks_queue[0])
         blocks_queue.pop(0)
-        return "BLOCK VALIDATED SUCCESSFULLY"
+        print("RIMANGONO : " + str(len(blocks_queue)))
 
+        if not blocks_queue:
+            return "BLOCK VALIDATED SUCCESSFULLY "
+        else:
+            return "BLOCK VALIDATED SUCCESSFULLY : " + json.dumps(blocks_queue[0].transactions)
 
+@node.route('/getBlocks', methods=['GET'])
+def getBlockList():
+    if not blocks_queue:
+        return "there are no blocks in queue"
+    else:
+        print(tuple(str(i.hash) for i in blocks_queue))
+        return str(tuple(str(i.previousHash) for i in blocks_queue))
+
+@node.route('/summary', methods=['GET'])
+def summary():
+    return "BLOCKCHAIN : "+blocks()+ "TXION : " + getTxion()
 node.run(host='0.0.0.0')

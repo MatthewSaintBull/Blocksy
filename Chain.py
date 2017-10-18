@@ -2,6 +2,7 @@
 
 import random
 from Block import Block
+
 class Chain():
     def __init__(self):
         self.__blockChain = []
@@ -17,14 +18,11 @@ class Chain():
     def __generateId(self, block):
         block.id = hash(random.randint(0,100**100)+block.timestamp)
 
-    def __generateHash(self, block):
-        block.hash = block.calculateHash()
 
     def addBlock(self, block):
         result = self.__confirmBlock(block)
         if result == 0:
             self.__generateId(block)
-            self.__generateHash(block)
             self.__blockChain.append(block)
         return result
 
@@ -38,7 +36,6 @@ class Chain():
         incrementor = int(last_proof) + 1
         while not (incrementor % 11 == 0 and incrementor % last_proof == 0):
             incrementor += 1
-            print("incrementor : " + str(incrementor) )
         return incrementor
 
     def validateBlock(self):
@@ -47,6 +44,6 @@ class Chain():
         return proof
 
     def startChain(self):
-        block = Block('48d13d0f7e77b01c2f6c2fe581b3c1e7c5679fd901f705ba96731daf22af204f',0)
+        block = Block('48d13d0f7e77b01c2f6c2fe581b3c1e7c5679fd901f705ba96731daf22af204f',{'from':'test','to':'test','value':'0'})
         self.addBlock(block)
         return block
