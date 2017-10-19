@@ -8,11 +8,11 @@ import requests
 class Chain():
     def __init__(self):
         self.__blockChain = []
-        self.__nodes = set()
+        self.__nodes = []
 
-    def register_node(self,address: str) -> None:
+    def register_node(self,address: str):
         parsed_url = urlparse(address)
-        self.__nodes.add(parsed_url.netloc)
+        self.__nodes.append(parsed_url.netloc)
 
     def consensus(self):
         nodes = self.__nodes
