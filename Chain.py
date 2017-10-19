@@ -1,71 +1,78 @@
-#BlockChain Class
+# BlockChain Class
 
 import random
 from Block import Block
 from urllib.parse import urlparse
 import requests
 
-class Chain():
+
+class Chain:
     def __init__(self):
-        self.__blockChain = []
+        self.__blockchain = []
         self.__nodes = []
 
-    def register_node(self,address: str):
+    def register_node(self, address):
         parsed_url = urlparse(address)
         self.__nodes.append(parsed_url.netloc)
 
     def consensus(self):
         nodes = self.__nodes
-        updatedChain = None
-        lenChain = len(self.__blockChain)
-        for  node in nodes:
+        updated_chain = None
+        len_chain = len(self.__blockchain)
+        for node in nodes:
             response = requests.get(f'http://{node}/blocks')
-            if response.code == 200:
-                if len(response.json() > lenChain):
-                    lenChain = len(response.json())
-                    updatedChain = response.json()
-        if updatedChain:
-            self.__blockChain = updatedChain
+            if response.code is 200:
+                if len(response.json() is len_chain):
+                    len_chain = len(response.json())
+                    updated_chain = response.json()
+        if updated_chain:
+            self.__blockchain = updated_chain
             return True
         return False
 
-    def __confirmBlock(self, block):
-        if not self.__blockChain: return 0
-        return self.__compareBlocks(block,self.__blockChain[-1])
+    def __confirm_block(self, block):
+        if not self.__blockchain:
+            return 0
+        return self.__compare_blocks(block, self.__blockchain[-1])
 
-    def __compareBlocks(self, currentBlock,previousBlock):
-        if currentBlock.previousHash != previousBlock.hash: return -1
-        else: return 0
+    @staticmethod
+    def __compare_blocks(current_block, previous_block):
+        if current_block.previous_hash is not previous_block.hash:
+            return -1
+        else:
+            return 0
 
-    def __generateId(self, block):
-        block.id = hash(random.randint(0,100**100)+block.timestamp)
+    @staticmethod
+    def __generate_id(block):
+        block.id = hash(random.randint(0, 100 ** 100) + block.timestamp)
 
-
-    def addBlock(self, block):
-        result = self.__confirmBlock(block)
-        if result == 0:
-            self.__generateId(block)
-            self.__blockChain.append(block)
+    def add_block(self, block):
+        result = self.__confirm_block(block)
+        if result is 0:
+            self.__generate_id(block)
+            self.__blockchain.append(block)
         return result
 
-    def getPreviousHash(self):
-        return self.__blockChain[-1].hash
+    def get_previous_hash(self):
+        return self.__blockchain[-1].hash
 
-    def getBlockChain(self):
-        return self.__blockChain
+    def get_blockchain(self):
+        return self.__blockchain
 
-    def __proofOfWork(self,last_proof):
-        incrementor = int(last_proof) + 1
-        while not (incrementor % 11 == 0 and incrementor % last_proof == 0):
-            incrementor += 1
-        return incrementor
+    @staticmethod
+    def __proof_of_work(last_proof):
+        incremental = int(last_proof) + 1
+        while not (incremental % 11 is 0 and incremental % last_proof == 0):
+            incremental += 1
+        return incremental
 
-    def validateBlock(self):
-        last_proof = self.__blockChain[-1].proof
-        proof = self.__proofOfWork(last_proof)
+    def validate_block(self):
+        last_proof = self.__blockchain[-1].proof
+        proof = self.__proof_of_work(last_proof)
         return proof
 
-    def startChain(self):
-        block = Block('48d13d0f7e77b01c2f6c2fe581b3c1e7c5679fd901f705ba96731daf22af204f',{'from':'test','to':'test','value':'0'})
-        self.addBlock(block)
+    def start_chain(self):
+        block = Block('48d13d0f7e77b01c2f6c2fe581b3c1e7c5679fd901f705ba96731daf22af204f',
+                      {'from': 'test', 'to': 'test', 'value': '0'})
+        self.add_block(block)
         return block
