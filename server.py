@@ -16,7 +16,7 @@ def blocks():
     chain = blockChain.getBlockChain()
     json_chain=[]
     for block in chain:
-        dict = {'hash':block.hash,'id':block.id,'transaction':block.transactions}
+        dict = {'hash':block.hash,'id':block.id,'transaction':block.transactions,'proof':block.proof}
         json_chain.append(dict)
     return json.dumps(json_chain)
 

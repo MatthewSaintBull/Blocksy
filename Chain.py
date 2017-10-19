@@ -2,10 +2,32 @@
 
 import random
 from Block import Block
+from urllib.parse import urlparse
+import requests
 
 class Chain():
     def __init__(self):
         self.__blockChain = []
+        self.__nodes = set()
+
+    def register_node(self,address: str) -> None:
+        parsed_url = urlparse(address)
+        self.__nodes.add(parsed_url.netloc)
+
+    def consensus(self):
+        nodes = self.__nodes
+        updatedChain = None
+        lenChain = len(self.__blockChain)
+        for  node in nodes:
+            response = requests.get(f'http://{node}/blocks')
+            if response.code == 200:
+                if len(response.json() > lenChain):
+                    lenChain = len(response.json())
+                    updatedChain = response.json()
+        if updatedChain:
+            self.__blockChain = updatedChain
+            return True
+        return False
 
     def __confirmBlock(self, block):
         if not self.__blockChain: return 0
